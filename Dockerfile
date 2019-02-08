@@ -9,6 +9,7 @@ ENV APP_VERSION   3.16.1
 # directory structure.
 RUN set -x \
     && apk add --no-cache curl xmlstarlet bash ttf-dejavu libc6-compat \
+    && mkdir -p                "${JIRA_HOME}" \
     && mkdir -p                "${JIRA_HOME}/caches/indexes" \
     && chmod -R 700            "${JIRA_HOME}" \
     && chown -R daemon:daemon  "${JIRA_HOME}" \
@@ -40,10 +41,10 @@ EXPOSE 8080
 # Set volume mount points for installation and home directory. Changes to the
 # home directory needs to be persisted as well as parts of the installation
 # directory due to eg. logs.
-VOLUME ["/var/atlassian/jira", "/opt/atlassian/jira/logs"]
+VOLUME ["{$JIRA_HOME}"]
 
 # Set the default working directory as the installation directory.
-WORKDIR /var/atlassian/jira
+WORKDIR $JIRA_HOME
 
 COPY "docker-entrypoint.sh" "/"
 ENTRYPOINT ["/docker-entrypoint.sh"]
